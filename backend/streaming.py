@@ -18,6 +18,7 @@ from fastapi.responses import StreamingResponse
 
 from models import GenerateRequest
 from commands import supports_img2img, supports_cfg, MODEL_COMMANDS, get_command_for_base_model
+from image_metadata import save_metadata
 
 # Directory for storing generated images
 IMAGES_DIR = Path(__file__).parent / ".generated_images"
@@ -115,6 +116,11 @@ async def event_generator(req: GenerateRequest):
     output_path = str(Path(tempfile.gettempdir()) / f"mflux-{uuid.uuid4().hex}.png")
     cmd.extend(["--output", output_path])
 
+    # Track peak memory from SSE events
+    peak_memory_value = None
+    peak_memory_unit = None
+    start_time = asyncio.get_event_loop().time()
+
     # Launch subprocess
     process = None
     try:
@@ -166,6 +172,15 @@ async def event_generator(req: GenerateRequest):
             if event is None:
                 eof_count += 1
                 continue
+            # Capture peak_memory value for metadata
+            try:
+                event_json = event.split("data: ", 1)[1]
+                evt_data = json.loads(event_json)
+                if evt_data.get("type") == "peak_memory":
+                    peak_memory_value = evt_data.get("value")
+                    peak_memory_unit = evt_data.get("unit", "GB")
+            except Exception:
+                pass
             yield event
 
         # Wait for process
@@ -183,6 +198,23 @@ async def event_generator(req: GenerateRequest):
         img_id = uuid.uuid4().hex
         final_path = IMAGES_DIR / f"{img_id}.png"
         shutil.move(actual_path, final_path)
+
+        # Save generation metadata
+        elapsed = asyncio.get_event_loop().time() - start_time
+        save_metadata(img_id, {
+            "prompt": req.prompt,
+            "negative_prompt": req.negative_prompt,
+            "model": req.model,
+            "base_model": req.base_model,
+            "width": req.width,
+            "height": req.height,
+            "seed": req.seed,
+            "steps": req.num_inference_steps,
+            "guidance": req.guidance_scale,
+            "generation_time": round(elapsed, 2),
+            "peak_memory": peak_memory_value,
+            "peak_memory_unit": peak_memory_unit,
+        })
 
         yield f"data: {json.dumps({'type': 'done', 'image': f'/api/image/{img_id}.png'})}\n\n"
 

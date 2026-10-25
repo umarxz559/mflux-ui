@@ -20,6 +20,7 @@ from fastapi.responses import FileResponse
 from models import GenerateRequest, ModelDiscoveryResponse
 from cli_runner import run_mflux_command
 from streaming import generate_stream
+from image_metadata import list_images
 
 # ---------------------------------------------------------------------------
 # App setup
@@ -166,6 +167,20 @@ async def serve_image(image_id: str):
     if not image_path.exists():
         raise HTTPException(status_code=404, detail="Image not found")
     return FileResponse(image_path, media_type="image/png")
+
+
+@app.get("/api/images")
+async def list_generated_images():
+    """
+    List all generated images with their metadata.
+
+    Returns list of dicts:
+      { image_id, prompt, model, base_model, width, height, seed, steps,
+        guidance, generation_time, peak_memory, peak_memory_unit, timestamp }
+    Sorted by timestamp descending (newest first).
+    """
+    images = list_images()
+    return {"images": images}
 
 
 # ---------------------------------------------------------------------------

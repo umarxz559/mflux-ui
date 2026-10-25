@@ -14,14 +14,20 @@ const STREAM_TIMEOUT_MS = 120_000 // 2 min safety timeout
 function loadSettings() {
   try {
     const saved = localStorage.getItem(STORAGE_KEY)
-    if (saved) return { ...DEFAULT_SETTINGS, ...JSON.parse(saved) }
+    if (saved) {
+      const parsed = JSON.parse(saved)
+      // Never restore prompt/negativePrompt — always start fresh
+      return { ...DEFAULT_SETTINGS, prompt: '', negativePrompt: '', ...parsed }
+    }
   } catch {}
-  return { ...DEFAULT_SETTINGS }
+  return { ...DEFAULT_SETTINGS, prompt: '', negativePrompt: '' }
 }
 
 function saveSettings(settings) {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings))
+    // Never persist prompt or negativePrompt
+    const { prompt, negativePrompt, ...safe } = settings
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(safe))
   } catch {}
 }
 
@@ -35,6 +41,8 @@ export default function App() {
   const [peakMemory, setPeakMemory] = useState(null)
   const [generationTime, setGenerationTime] = useState(null)
   const [rawOutput, setRawOutput] = useState('')
+  const [images, setImages] = useState([])
+  const [selectedMeta, setSelectedMeta] = useState(null)
   const doneRef = useRef(false)
   const readerRef = useRef(null)
 
@@ -48,10 +56,32 @@ export default function App() {
       .catch(() => setModels([]))
   }, [])
 
+  // Load generated images on mount
+  useEffect(() => {
+    fetch('/api/images')
+      .then(res => res.json())
+      .then(data => {
+        if (data.images?.length) setImages(data.images)
+      })
+      .catch(() => setImages([]))
+  }, [])
+
   // Save settings whenever they change
   useEffect(() => {
     saveSettings(settings)
   }, [settings])
+
+  // Refresh images list when output changes (new image generated)
+  useEffect(() => {
+    if (output) {
+      fetch('/api/images')
+        .then(res => res.json())
+        .then(data => {
+          if (data.images?.length) setImages(data.images)
+        })
+        .catch(() => {})
+    }
+  }, [output])
 
   // Handle model change — reset steps/guidance to model defaults
   const handleModelChange = (model, baseModel) => {
@@ -93,6 +123,18 @@ export default function App() {
         doneRef.current = true
         setOutput(prev => data.image ?? prev)
         setProgress(prev => ({ ...prev, percent: 100 }))
+        // Find the newly generated image metadata
+        fetch('/api/images')
+          .then(res => res.json())
+          .then(data => {
+            if (data.images?.length) {
+              setImages(data.images)
+              // The first image is the newest one
+              const newest = data.images[0]
+              if (newest) setSelectedMeta(newest)
+            }
+          })
+          .catch(() => {})
         break
       case 'error':
         setError(data.message)
@@ -134,6 +176,7 @@ export default function App() {
     setPeakMemory(null)
     setGenerationTime(null)
     setRawOutput('')
+    setSelectedMeta(null)
     doneRef.current = false
 
     let reader = null
@@ -202,6 +245,16 @@ export default function App() {
       setLoading(false)
       readerRef.current = null
     }
+  }
+
+  // Handle gallery thumbnail click — load image + metadata
+  const handleSelectImage = (meta) => {
+    const imgId = meta.image_id
+    setOutput(`/api/image/${imgId}.png`)
+    setSelectedMeta(meta)
+    setProgress({ percent: 0, current: 0, total: 0 })
+    setPeakMemory(null)
+    setGenerationTime(null)
   }
 
   return (
@@ -316,7 +369,12 @@ export default function App() {
         </section>
 
         {/* Right Panel - Output */}
-        <OutputPanel output={output} />
+        <OutputPanel
+          output={output}
+          images={images}
+          selectedMeta={selectedMeta}
+          onSelectImage={handleSelectImage}
+        />
       </main>
     </div>
   )

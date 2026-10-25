@@ -503,3 +503,148 @@ textarea {
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+/* ---- Metadata toggle ---- */
+.meta-toggle-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 700px;
+}
+
+.meta-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 8px 16px;
+  color: #aaa;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.meta-toggle-btn:hover {
+  border-color: #5b9aff;
+  color: #fff;
+}
+
+.meta-toggle-btn .arrow {
+  font-size: 10px;
+  color: #666;
+  transition: transform 0.2s;
+}
+
+/* ---- Metadata panel ---- */
+.meta-panel {
+  width: 100%;
+  max-width: 700px;
+  background: #111;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+}
+
+.meta-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.meta-label {
+  flex-shrink: 0;
+  width: 110px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #555;
+  padding-top: 2px;
+  text-align: right;
+}
+
+.meta-value {
+  font-size: 13px;
+  color: #ccc;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  word-break: break-word;
+}
+
+.meta-value-multiline {
+  font-size: 13px;
+  color: #ccc;
+  word-break: break-word;
+  line-height: 1.5;
+}
+
+/* ---- Gallery ---- */
+.gallery-section {
+  width: 100%;
+  max-width: 700px;
+  margin-top: 8px;
+}
+
+.gallery-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 8px;
+}
+
+.gallery-thumb {
+  background: none;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 0;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.15s;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.gallery-thumb:hover {
+  border-color: #5b9aff;
+  transform: scale(1.03);
+}
+
+.gallery-thumb-img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+}
+
+.gallery-thumb-info {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 6px;
+  background: #1a1a1a;
+  font-size: 10px;
+  color: #777;
+}
+
+.gallery-thumb-time {
+  color: #888;
+}
+
+.gallery-thumb-steps {
+  color: #5b9aff;
+}
