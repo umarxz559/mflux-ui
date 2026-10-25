@@ -1,0 +1,505 @@
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---- Header ---- */
+.app-header {
+  padding: 20px 32px;
+  border-bottom: 1px solid #222;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  background: #111;
+}
+
+.app-header h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.5px;
+}
+
+.app-header .subtitle {
+  font-size: 14px;
+  color: #888;
+}
+
+/* ---- Main Layout ---- */
+.app-main {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ---- Controls Panel ---- */
+.controls-panel {
+  width: 460px;
+  min-width: 460px;
+  padding: 24px;
+  overflow-y: auto;
+  border-right: 1px solid #222;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: #111;
+}
+
+/* ---- Output Panel ---- */
+.output-panel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  overflow: auto;
+  background: #0d0d0d;
+}
+
+/* ---- Section Titles ---- */
+.section-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+/* ---- Selects ---- */
+select,
+input[type='text'],
+input[type='number'],
+textarea {
+  width: 100%;
+  padding: 10px 12px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  color: #e0e0e0;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+select:focus,
+input[type='text']:focus,
+input[type='number']:focus,
+textarea:focus {
+  border-color: #5b9aff;
+}
+
+select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23888' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+
+/* ---- Textarea ---- */
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* ---- Size Row ---- */
+.size-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.size-row select {
+  flex: 1;
+}
+
+.size-row .custom-size {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.size-row .custom-size input {
+  width: 70px;
+  text-align: center;
+}
+
+.size-row .custom-size span {
+  color: #555;
+  font-size: 14px;
+}
+
+/* ---- Prompt ---- */
+.prompt-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.prompt-group textarea {
+  min-height: 100px;
+}
+
+.negative-prompt textarea {
+  min-height: 50px;
+  border-color: #2a2a2a;
+}
+
+/* ---- Image Upload ---- */
+.image-upload-area {
+  border: 2px dashed #333;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  position: relative;
+}
+
+.image-upload-area:hover {
+  border-color: #5b9aff;
+  background: #151515;
+}
+
+.image-upload-area.has-image {
+  padding: 8px;
+}
+
+.image-upload-area input[type='file'] {
+  display: none;
+}
+
+.image-upload-area .upload-label {
+  font-size: 14px;
+  color: #888;
+  pointer-events: none;
+}
+
+.image-upload-area .upload-label strong {
+  color: #5b9aff;
+}
+
+.image-upload-area .preview-img {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 6px;
+  display: block;
+  margin: 0 auto;
+}
+
+.clear-image-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.strength-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.strength-row input[type='range'] {
+  flex: 1;
+  accent-color: #5b9aff;
+}
+
+.strength-row .strength-value {
+  font-size: 14px;
+  color: #aaa;
+  min-width: 40px;
+  text-align: right;
+}
+
+/* ---- Advanced Settings Accordion ---- */
+.advanced-toggle {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: inherit;
+}
+
+.advanced-toggle:hover {
+  color: #aaa;
+}
+
+.advanced-toggle .arrow {
+  transition: transform 0.2s;
+  font-size: 10px;
+}
+
+.advanced-toggle.open .arrow {
+  transform: rotate(90deg);
+}
+
+.advanced-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 4px;
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.setting-row label {
+  font-size: 13px;
+  color: #999;
+  white-space: nowrap;
+}
+
+.setting-row input[type='number'],
+.setting-row select {
+  width: 120px;
+}
+
+/* ---- Generate Button ---- */
+.generate-btn {
+  width: 100%;
+  padding: 14px;
+  background: #5b9aff;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s, opacity 0.2s;
+}
+
+.generate-btn:hover:not(:disabled) {
+  background: #4a8aee;
+}
+
+.generate-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ---- Progress bar ---- */
+.progress-bar-container {
+  position: relative;
+  height: 28px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #5b9aff, #3a7aff);
+  transition: width 0.3s ease;
+  border-radius: 8px;
+  min-width: 2%;
+}
+
+.progress-bar-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #fff;
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 8px;
+}
+
+/* ---- Progress details (below bar) ---- */
+.progress-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  background: #111;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.detail-label {
+  color: #666;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 11px;
+}
+
+.detail-value {
+  color: #ccc;
+  font-variant-numeric: tabular-nums;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 12px;
+}
+
+.detail-done {
+  color: #6fcf6f;
+  font-weight: 600;
+}
+
+/* ---- Raw output ---- */
+.raw-output {
+  margin-top: 4px;
+}
+
+.raw-output summary {
+  font-size: 12px;
+  color: #666;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.raw-output pre {
+  margin-top: 4px;
+  padding: 8px;
+  background: #0a0a0a;
+  border: 1px solid #222;
+  border-radius: 6px;
+  font-size: 11px;
+  color: #888;
+  max-height: 120px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* ---- Progress & Error ---- */
+.progress {
+  padding: 10px 14px;
+  background: #1a2a1a;
+  border: 1px solid #2a4a2a;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #6fcf6f;
+}
+
+.error {
+  padding: 10px 14px;
+  background: #2a1a1a;
+  border: 1px solid #4a2a2a;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #ff6f6f;
+}
+
+/* ---- Output Image ---- */
+.output-placeholder {
+  color: #444;
+  font-size: 15px;
+  text-align: center;
+}
+
+.output-placeholder .icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.output-image {
+  max-width: 100%;
+  max-height: calc(100vh - 200px);
+  border-radius: 10px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+}
+
+.output-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  justify-content: center;
+}
+
+.output-actions button {
+  padding: 8px 16px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  color: #ccc;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.output-actions button:hover {
+  border-color: #5b9aff;
+}
+
+/* ---- Model badge ---- */
+.model-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  background: #1a2a3a;
+  border: 1px solid #2a4a6a;
+  border-radius: 4px;
+  font-size: 11px;
+  color: #5b9aff;
+  margin-left: 8px;
+}
+
+.img2img-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  background: #2a2a1a;
+  border: 1px solid #4a4a2a;
+  border-radius: 4px;
+  font-size: 11px;
+  color: #d4a843;
+  margin-left: 8px;
+}
+
+/* ---- Scrollbar ---- */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

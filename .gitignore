@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+backend/lib/
+__pycache__/
+*.pyc
+*.pyo
+
+# Generated images
+backend/.generated_images/
+
+# Environment
+.env
+.venv/
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build
+frontend/dist/
+
+# Logs
+*.log
