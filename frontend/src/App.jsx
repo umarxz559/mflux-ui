@@ -56,6 +56,30 @@ export default function App() {
       .catch(() => setModels([]))
   }, [])
 
+  // Load recommended precision for this hardware (only if user hasn't saved a choice)
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY)
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (parsed.computePrecision != null) return
+      }
+    } catch {}
+    fetch('/api/config')
+      .then(res => res.json())
+      .then(data => {
+        if (data.recommendedPrecision) {
+          setSettings(prev => {
+            if (prev.computePrecision !== data.recommendedPrecision) {
+              return { ...prev, computePrecision: data.recommendedPrecision }
+            }
+            return prev
+          })
+        }
+      })
+      .catch(() => {})
+  }, [])
+
   // Load generated images on mount
   useEffect(() => {
     fetch('/api/images')

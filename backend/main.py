@@ -9,6 +9,8 @@ Endpoints:
 """
 
 import base64
+import platform
+import subprocess
 import uuid
 import shutil
 from pathlib import Path
@@ -39,6 +41,62 @@ app.add_middleware(
 # Directory for storing generated images (served via /api/image/{id})
 IMAGES_DIR = Path(__file__).parent / ".generated_images"
 IMAGES_DIR.mkdir(exist_ok=True)
+
+
+# ---------------------------------------------------------------------------
+# Mac chip detection
+# ---------------------------------------------------------------------------
+
+def _detect_mac_chip() -> str | None:
+    """Detect Apple Silicon chip generation via sysctl.
+    
+    Returns 'm1', 'm2', 'm3', 'm4', 'm5' or None if not a Mac or not Apple Silicon.
+    """
+    if platform.system() != "Darwin":
+        return None
+    try:
+        result = subprocess.run(
+            ["sysctl", "-n", "hw.optional.memtag"],
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+        # hw.optional.memtag=1 means M4+ (M4 introduced memtag support)
+        # hw.optional.memtag=0 or error means M1/M2/M3
+        # But we need to distinguish M1/M2/M3
+        # Actually, let's use a more reliable approach: check the CPU brand string
+        result = subprocess.run(
+            ["sysctl", "-n", "machdep.cpu.brand_string"],
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+        if result.returncode != 0:
+            return None
+        brand = result.stdout.strip().lower()
+        # Apple Silicon M-series chips: "apple m1", "apple m2", "apple m3", "apple m4", etc.
+        if "apple m1" in brand:
+            return "m1"
+        elif "apple m2" in brand:
+            return "m2"
+        elif "apple m3" in brand:
+            return "m3"
+        elif "apple m4" in brand:
+            return "m4"
+        elif "apple m5" in brand:
+            return "m5"
+        return "unknown"
+    except (subprocess.TimeoutExpired, OSError):
+        return None
+
+
+def recommended_precision() -> str:
+    """Return the recommended compute precision for the current hardware."""
+    chip = _detect_mac_chip()
+    if chip in ("m3", "m4", "m5"):
+        return "bfloat16"  # M3+ supports bfloat16 natively
+    # M1, M2, or non-Apple Silicon
+    return "float16"
 
 
 # ---------------------------------------------------------------------------
@@ -90,6 +148,16 @@ async def discover_models():
         ]
 
     return ModelDiscoveryResponse(models=cache_models)
+
+
+@app.get("/api/config")
+async def get_config():
+    """Return server-side defaults including hardware-recommended precision."""
+    chip = _detect_mac_chip() or "unknown"
+    return {
+        "recommendedPrecision": recommended_precision(),
+        "detectedChip": chip,
+    }
 
 
 @app.post("/api/generate")
