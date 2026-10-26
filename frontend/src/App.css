@@ -648,3 +648,40 @@ textarea {
 .gallery-thumb-steps {
   color: #5b9aff;
 }
+
+/* ---- Gallery delete button ---- */
+.gallery-thumb-wrap {
+  position: relative;
+}
+
+.gallery-delete-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(220, 50, 50, 0.85);
+  color: #fff;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.15s, background 0.15s, transform 0.15s;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.gallery-thumb-wrap:hover .gallery-delete-btn {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.gallery-delete-btn:hover {
+  background: rgba(220, 50, 50, 1);
+  transform: scale(1.15);
+}

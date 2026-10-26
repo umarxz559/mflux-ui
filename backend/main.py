@@ -20,7 +20,7 @@ from fastapi.responses import FileResponse
 from models import GenerateRequest, ModelDiscoveryResponse
 from cli_runner import run_mflux_command
 from streaming import generate_stream
-from image_metadata import list_images
+from image_metadata import list_images, delete_image
 
 # ---------------------------------------------------------------------------
 # App setup
@@ -181,6 +181,17 @@ async def list_generated_images():
     """
     images = list_images()
     return {"images": images}
+
+
+@app.delete("/api/image/{image_id}")
+async def delete_generated_image(image_id: str):
+    """
+    Delete a generated image and its metadata.
+    """
+    deleted = delete_image(image_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Image not found")
+    return {"ok": True}
 
 
 # ---------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-export default function OutputPanel({ output, images, selectedMeta, onSelectImage }) {
+export default function OutputPanel({ output, images, selectedMeta, onSelectImage, onDeleteImage }) {
   const [downloading, setDownloading] = useState(false)
   const [showMeta, setShowMeta] = useState(false)
 
@@ -63,7 +63,7 @@ export default function OutputPanel({ output, images, selectedMeta, onSelectImag
         )}
 
         {/* Gallery always shown at bottom */}
-        {images.length > 0 && <GallerySection images={images} onSelect={onSelectImage} />}
+        {images.length > 0 && <GallerySection images={images} onSelect={onSelectImage} onDelete={onDeleteImage} />}
       </div>
     </div>
   )
@@ -103,7 +103,7 @@ function MetadataDisplay({ meta }) {
 
 /* ---- Image gallery ---- */
 
-function GallerySection({ images, onSelect }) {
+function GallerySection({ images, onSelect, onDelete }) {
   return (
     <div className='gallery-section'>
       <div className='gallery-title'>Generated Images ({images.length})</div>
@@ -112,18 +112,32 @@ function GallerySection({ images, onSelect }) {
           const uuid = img.image_id
           const thumbUrl = `/api/image/${uuid}.png`
           return (
-            <button
+            <div
               key={uuid}
-              className='gallery-thumb'
-              onClick={() => onSelect(img)}
-              title={img.prompt?.slice(0, 80) || 'No prompt'}
+              className='gallery-thumb-wrap'
             >
-              <img src={thumbUrl} alt='' className='gallery-thumb-img' loading='lazy' />
-              <div className='gallery-thumb-info'>
-                <span className='gallery-thumb-time'>{formatTime(img.timestamp)}</span>
-                <span className='gallery-thumb-steps'>{img.steps} steps</span>
-              </div>
-            </button>
+              <button
+                className='gallery-thumb'
+                onClick={() => onSelect(img)}
+                title={img.prompt?.slice(0, 80) || 'No prompt'}
+              >
+                <img src={thumbUrl} alt='' className='gallery-thumb-img' loading='lazy' />
+                <div className='gallery-thumb-info'>
+                  <span className='gallery-thumb-time'>{formatTime(img.timestamp)}</span>
+                  <span className='gallery-thumb-steps'>{img.steps} steps</span>
+                </div>
+              </button>
+              <button
+                className='gallery-delete-btn'
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onDelete(img)
+                }}
+                title='Delete image'
+              >
+                ✕
+              </button>
+            </div>
           )
         })}
       </div>

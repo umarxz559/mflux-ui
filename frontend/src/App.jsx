@@ -257,6 +257,22 @@ export default function App() {
     setGenerationTime(null)
   }
 
+  // Handle gallery image deletion
+  const handleDeleteImage = async (meta) => {
+    if (!window.confirm('Delete this image?')) return
+    try {
+      await fetch(`/api/image/${meta.image_id}`, { method: 'DELETE' })
+      setImages(prev => prev.filter(img => img.image_id !== meta.image_id))
+      // If the deleted image is currently shown, clear it
+      if (selectedMeta?.image_id === meta.image_id) {
+        setOutput(null)
+        setSelectedMeta(null)
+      }
+    } catch (err) {
+      console.error('Delete failed:', err)
+    }
+  }
+
   return (
     <div className="app">
       <header className="app-header">
@@ -374,6 +390,7 @@ export default function App() {
           images={images}
           selectedMeta={selectedMeta}
           onSelectImage={handleSelectImage}
+          onDeleteImage={handleDeleteImage}
         />
       </main>
     </div>

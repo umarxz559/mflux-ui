@@ -93,6 +93,42 @@ def get_metadata(image_id: str) -> dict | None:
             return None
 
 
+def delete_image(image_id: str) -> bool:
+    """
+    Delete an image file and its metadata.
+
+    Returns True if the image was found and deleted.
+    """
+    with _lock:
+        index = _load_index()
+        if image_id not in index:
+            return False
+
+        success = True
+
+        # Remove the image file
+        img_path = IMAGES_DIR / f"{image_id}.png"
+        if img_path.exists():
+            try:
+                img_path.unlink()
+            except OSError:
+                success = False
+
+        # Remove the sidecar metadata file
+        meta_path = IMAGES_DIR / f"{image_id}.meta.json"
+        if meta_path.exists():
+            try:
+                meta_path.unlink()
+            except OSError:
+                success = False
+
+        # Remove from index
+        del index[image_id]
+        _save_index(index)
+
+        return success
+
+
 def list_images() -> list[dict]:
     """
     List all generated images with their metadata, newest first.
